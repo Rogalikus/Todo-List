@@ -5,13 +5,14 @@ type PropsType = {
    title: string;
    study: Array<TaskType>
    movies: Array<TaskType>
+   removeTasks1: Function
+   changeFilter: Function
 }
 
-export const MainPage = ({ title, study, movies }: PropsType) => {
-
-   const listOfTasks = title == 'Movies'
-      ? movies.map((el) => { return <li>{el.title} <input type='checkbox' checked={el.isDone} /></li> })
-      : study.map((el) => { return <li>{el.title} <input type='checkbox' checked={el.isDone} /></li> })
+export const MainPage = ({ title, study, movies, removeTasks1, changeFilter }: PropsType) => {
+   const listOfTasks = title === 'Movies'
+      ? movies.map((el) => { return <li><input key={el.id} type='checkbox' checked={el.isDone} /><span>{el.title}</span><button>X</button></li> })
+      : study.map((el) => { return <li><input key={el.id} type='checkbox' checked={el.isDone} /><span>{el.title}</span><button onClick={() => { removeTasks1(el.id) }}>X</button></li> })
 
    return (
       <div>
@@ -26,9 +27,9 @@ export const MainPage = ({ title, study, movies }: PropsType) => {
             }
          </ul>
          <div>
-            <button>All</button>
-            <button>Active</button>
-            <button>Completed</button>
+            <button onClick={() => { changeFilter('all') }}>All</button>
+            <button onClick={() => { changeFilter('active') }}>Active</button>
+            <button onClick={() => { changeFilter('complete') }}>Completed</button>
          </div>
       </div>
    )
