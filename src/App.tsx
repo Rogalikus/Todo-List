@@ -1,47 +1,51 @@
 import React, { useState } from 'react';
 import { MainPage } from './components/MainPage';
 import './App.css';
+import { v1 } from 'uuid';
 
 export type TaskType = {
-  id: number;
+  id: string;
   title: string;
   isDone: boolean;
 }
 
-type FilteredValuesType = 'all' | 'complete' | 'active';
+export type FilteredValuesType = 'all' | 'complete' | 'active';
 
 function App() {
 
   //Local State
-  let iniTasks1: Array<TaskType> = [
-    { id: 1, title: 'CSS', isDone: true },
-    { id: 2, title: 'HTML', isDone: false },
-    { id: 3, title: 'React', isDone: true }
-  ]
-
   let titles = ['What to learn', 'Movies']
 
+  let iniTasks1: Array<TaskType> = [
+    { id: v1(), title: 'CSS', isDone: true },
+    { id: v1(), title: 'HTML', isDone: false },
+    { id: v1(), title: 'React', isDone: true }
+  ]
+
+
   let iniTasks2: Array<TaskType> = [
-    { id: 1, title: 'Muvy 43', isDone: false },
-    { id: 2, title: 'Balto', isDone: true },
-    { id: 3, title: 'Legends', isDone: true },
+    { id: v1(), title: 'Muvy 43', isDone: false },
+    { id: v1(), title: 'Balto', isDone: true },
+    { id: v1(), title: 'Legends', isDone: true },
   ]
 
   //useState
-  const [tasks1, setTasks1] = useState([
-    { id: 1, title: 'CSS', isDone: true },
-    { id: 2, title: 'HTML', isDone: false },
-    { id: 3, title: 'React', isDone: true }
-  ])
+  const [tasks1, setTasks1] = useState(iniTasks1)
   const [tasks2, setTasks2] = useState(iniTasks2)
   const [filter, setFilter] = useState<FilteredValuesType>('all')
 
   //Future Action
-  const removeTasks1 = (id: number) => {
+  const removeTasks1 = (id: string) => {
     setTasks1(tasks1.filter((el) => el.id !== id))
   }
   const changeFilter = (value: FilteredValuesType) => {
     setFilter(value)
+  }
+
+  const addTask = (newTitle: string) => {
+    let newTask = { id: v1(), title: newTitle, isDone: false }
+    let newTasks = [newTask, ...tasks1]
+    setTasks1(newTasks)
   }
 
   let filteredTasks = tasks1
@@ -55,7 +59,7 @@ function App() {
 
   //Refactoring
   const MainComponent = titles.map((el, ind) => {
-    return <MainPage removeTasks1={removeTasks1} title={el} changeFilter={changeFilter} key={ind} study={filteredTasks} movies={tasks2} />
+    return <MainPage removeTasks1={removeTasks1} title={el} addTask={addTask} changeFilter={changeFilter} key={ind} study={filteredTasks} movies={tasks2} />
   })
 
   return (
