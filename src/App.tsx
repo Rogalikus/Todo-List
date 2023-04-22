@@ -41,7 +41,14 @@ function App() {
   const changeFilter = (value: FilteredValuesType) => {
     setFilter(value)
   }
-
+  const changeStatus = (id: string, isDone: boolean) => {
+    const findItem = tasks1.find((e) => e.id === id);
+    if (findItem) {
+      findItem.isDone = isDone
+    }
+    let copy = [...tasks1]
+    setTasks1(copy)
+  }
   const addTask = (newTitle: string) => {
     let newTask = { id: v1(), title: newTitle, isDone: false }
     let newTasks = [newTask, ...tasks1]
@@ -59,7 +66,7 @@ function App() {
 
   //Refactoring
   const MainComponent = titles.map((el, ind) => {
-    return <MainPage removeTasks1={removeTasks1} title={el} addTask={addTask} changeFilter={changeFilter} key={ind} study={filteredTasks} movies={tasks2} />
+    return <MainPage changeStatus={changeStatus} removeTasks1={removeTasks1} title={el} addTask={addTask} changeFilter={changeFilter} key={ind} study={filteredTasks} movies={tasks2} />
   })
 
   return (

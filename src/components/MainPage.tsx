@@ -8,9 +8,10 @@ type PropsType = {
    removeTasks1: (id: string) => void
    changeFilter: (value: FilteredValuesType) => void
    addTask: (newTitle: string) => void
+   changeStatus: (id: string, isDone: boolean) => void
 }
 
-export const MainPage = ({ title, study, movies, removeTasks1, changeFilter, addTask }: PropsType) => {
+export const MainPage = ({ title, study, movies, removeTasks1, changeFilter, addTask, changeStatus }: PropsType) => {
    //UseState
    const [newTaskTitle, setNewTaskTitle] = useState('')
 
@@ -26,7 +27,10 @@ export const MainPage = ({ title, study, movies, removeTasks1, changeFilter, add
    }
 
    const handleAddTask = () => {
-      addTask(newTaskTitle)
+      if (newTaskTitle.trim() === '') {
+         return addTask('Empty Task')
+      }
+      return addTask(newTaskTitle.trim())
    }
 
    const handleChangeFilter = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -41,8 +45,13 @@ export const MainPage = ({ title, study, movies, removeTasks1, changeFilter, add
 
    //Refactoring
    const listOfTasks = title === 'Movies'
-      ? movies.map((el) => { return <li key={el.id}><input type='checkbox' defaultChecked={el.isDone} /><span>{el.title}</span><button>X</button></li> })
-      : study.map((el) => { return <li key={el.id}><input type='checkbox' defaultChecked={el.isDone} /><span>{el.title}</span><button onClick={() => { removeTasks1(el.id) }}>X</button></li> })
+      ? movies.map((el) => { return <li key={el.id}><input type='checkbox' checked={el.isDone} /><span>{el.title}</span><button>X</button></li> })
+      : study.map((el) => {
+         const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+            changeStatus(el.id, e.currentTarget.checked)
+         }
+         return <li key={el.id}><input type='checkbox' onChange={onChangeHandler} checked={el.isDone} /><span>{el.title}</span><button onClick={() => { removeTasks1(el.id) }}>X</button></li>
+      })
 
    return (
       <div>
