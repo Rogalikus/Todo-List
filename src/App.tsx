@@ -33,6 +33,7 @@ function App() {
   const [tasks1, setTasks1] = useState(iniTasks1)
   const [tasks2, setTasks2] = useState(iniTasks2)
   const [filter, setFilter] = useState<FilteredValuesType>('all')
+  const [error, setError] = useState(false)
 
   //Future Action
   const removeTasks1 = (id: string) => {
@@ -66,7 +67,7 @@ function App() {
 
   //Refactoring
   const MainComponent = titles.map((el, ind) => {
-    return <MainPage changeStatus={changeStatus} removeTasks1={removeTasks1} title={el} addTask={addTask} changeFilter={changeFilter} key={ind} study={filteredTasks} movies={tasks2} />
+    return <MainPage error={error} setError={setError} changeStatus={changeStatus} removeTasks1={removeTasks1} title={el} addTask={addTask} changeFilter={changeFilter} key={ind} study={filteredTasks} movies={tasks2} />
   })
 
   return (

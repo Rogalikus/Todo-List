@@ -1,5 +1,6 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
 import { FilteredValuesType, TaskType } from "../App";
+import { error } from "console";
 
 type PropsType = {
    title: string;
@@ -9,9 +10,11 @@ type PropsType = {
    changeFilter: (value: FilteredValuesType) => void
    addTask: (newTitle: string) => void
    changeStatus: (id: string, isDone: boolean) => void
+   error: boolean
+   setError: Dispatch<SetStateAction<boolean>>
 }
 
-export const MainPage = ({ title, study, movies, removeTasks1, changeFilter, addTask, changeStatus }: PropsType) => {
+export const MainPage = ({ title, study, movies, removeTasks1, changeFilter, addTask, changeStatus, error, setError }: PropsType) => {
    //UseState
    const [newTaskTitle, setNewTaskTitle] = useState('')
 
@@ -23,14 +26,18 @@ export const MainPage = ({ title, study, movies, removeTasks1, changeFilter, add
    }
 
    const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
+      setError(false)
       setNewTaskTitle(e.currentTarget.value)
    }
 
    const handleAddTask = () => {
-      if (newTaskTitle.trim() === '') {
-         return addTask('Empty Task')
+      if (newTaskTitle.trim() == '') {
+         setError(true)
+         return
+      } else {
+
+         return addTask(newTaskTitle.trim())
       }
-      return addTask(newTaskTitle.trim())
    }
 
    const handleChangeFilter = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -57,9 +64,10 @@ export const MainPage = ({ title, study, movies, removeTasks1, changeFilter, add
       <div>
          <h3>{title}</h3>
          <div>
-            <input value={newTaskTitle} onChange={(e) => handleOnChange(e)} onKeyDown={(e) => handleKeyDown(e)} />
+            <input className={error ? 'error' : ''} value={newTaskTitle} onChange={(e) => handleOnChange(e)} onKeyDown={(e) => handleKeyDown(e)} />
             <button onClick={handleAddTask}>+</button>
          </div>
+         {error ? <span className="error-message">Field is required</span> : ''}
          <ul>
             {
                listOfTasks
