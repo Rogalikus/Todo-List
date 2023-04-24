@@ -1,27 +1,27 @@
-import React, { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import { FilteredValuesType, TaskType } from "../App";
 
 type PropsType = {
    title: string;
-   study: Array<TaskType>
-   movies: Array<TaskType>
-   removeTasks1: (id: string) => void
-   changeFilter: (value: FilteredValuesType) => void
-   addTask: (newTitle: string) => void
-   changeStatus: (id: string, isDone: boolean) => void
-   error: boolean
-   setError: Dispatch<SetStateAction<boolean>>
+   tasks: Array<TaskType>
+   removeTasks: (id: string, taskId: string) => void
+   changeFilter: (value: FilteredValuesType, id: string) => void
+   addTask: (newTitle: string, todoListId: string) => void
+   changeStatus: (id: string, isDone: boolean, todoListId: string) => void
    filter: FilteredValuesType
+   taskListId: string
+   removeTodoList: (taskListId: string) => void
 }
 
-export const MainPage = ({ title, study, movies, removeTasks1, changeFilter, addTask, changeStatus, error, filter, setError }: PropsType) => {
+export const MainPage = ({ title, tasks, removeTasks, changeFilter, addTask, changeStatus, removeTodoList, filter, taskListId }: PropsType) => {
    //UseState
    const [newTaskTitle, setNewTaskTitle] = useState('')
+   const [error, setError] = useState<boolean>(false)
 
    //Handles
    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.code === 'Enter' && e.currentTarget.value.trim() === '') {
-         addTask(newTaskTitle)
+         addTask(newTaskTitle, taskListId)
       }
    }
 
@@ -36,33 +36,34 @@ export const MainPage = ({ title, study, movies, removeTasks1, changeFilter, add
          return
       } else {
 
-         return addTask(newTaskTitle.trim())
+         return addTask(newTaskTitle.trim(), taskListId)
       }
    }
 
    const handleChangeFilter = (e: React.MouseEvent<HTMLButtonElement>) => {
       if (e.currentTarget.innerHTML === 'All') {
-         return changeFilter('all')
+         return changeFilter('all', taskListId)
       } else if (e.currentTarget.innerHTML === 'Active') {
-         return changeFilter('active')
+         return changeFilter('active', taskListId)
       } else {
-         return changeFilter('complete')
+         return changeFilter('complete', taskListId)
       }
    }
 
+   const removeTodoListHandler = () => {
+      removeTodoList(taskListId)
+   }
    //Refactoring
-   const listOfTasks = title === 'Movies'
-      ? movies.map((el) => { return <li key={el.id}><input type='checkbox' checked={el.isDone} /><span>{el.title}</span><button>X</button></li> })
-      : study.map((el) => {
-         const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-            changeStatus(el.id, e.currentTarget.checked)
-         }
-         return <li key={el.id}><input type='checkbox' onChange={onChangeHandler} checked={el.isDone} /><span>{el.title}</span><button onClick={() => { removeTasks1(el.id) }}>X</button></li>
-      })
+   const listOfTasks = tasks.map((el) => {
+      const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+         changeStatus(el.id, e.currentTarget.checked, taskListId)
+      }
+      return <li key={el.id}><input type='checkbox' onChange={onChangeHandler} checked={el.isDone} /><span>{el.title}</span><button onClick={() => { removeTasks(el.id, taskListId) }}>X</button></li>
+   })
 
    return (
       <div>
-         <h3>{title}</h3>
+         <h3>{title} <button onClick={removeTodoListHandler}>X</button></h3>
          <div>
             <input className={error ? 'error' : ''} value={newTaskTitle} onChange={(e) => handleOnChange(e)} onKeyDown={(e) => handleKeyDown(e)} />
             <button onClick={handleAddTask}>+</button>
