@@ -1,6 +1,5 @@
 import React, { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
 import { FilteredValuesType, TaskType } from "../App";
-import { error } from "console";
 
 type PropsType = {
    title: string;
@@ -12,15 +11,16 @@ type PropsType = {
    changeStatus: (id: string, isDone: boolean) => void
    error: boolean
    setError: Dispatch<SetStateAction<boolean>>
+   filter: FilteredValuesType
 }
 
-export const MainPage = ({ title, study, movies, removeTasks1, changeFilter, addTask, changeStatus, error, setError }: PropsType) => {
+export const MainPage = ({ title, study, movies, removeTasks1, changeFilter, addTask, changeStatus, error, filter, setError }: PropsType) => {
    //UseState
    const [newTaskTitle, setNewTaskTitle] = useState('')
 
    //Handles
    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.code === 'Enter') {
+      if (e.code === 'Enter' && e.currentTarget.value.trim() === '') {
          addTask(newTaskTitle)
       }
    }
@@ -31,7 +31,7 @@ export const MainPage = ({ title, study, movies, removeTasks1, changeFilter, add
    }
 
    const handleAddTask = () => {
-      if (newTaskTitle.trim() == '') {
+      if (newTaskTitle.trim() === '') {
          setError(true)
          return
       } else {
@@ -74,9 +74,9 @@ export const MainPage = ({ title, study, movies, removeTasks1, changeFilter, add
             }
          </ul>
          <div>
-            <button onClick={(e) => { handleChangeFilter(e) }}>All</button>
-            <button onClick={(e) => { handleChangeFilter(e) }}>Active</button>
-            <button onClick={(e) => { handleChangeFilter(e) }}>Completed</button>
+            <button className={filter === 'all' ? 'active-filter' : ''} onClick={(e) => { handleChangeFilter(e) }}>All</button>
+            <button className={filter === 'active' ? 'active-filter' : ''} onClick={(e) => { handleChangeFilter(e) }}>Active</button>
+            <button className={filter === 'complete' ? 'active-filter' : ''} onClick={(e) => { handleChangeFilter(e) }}>Completed</button>
          </div>
       </div>
    )

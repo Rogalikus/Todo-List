@@ -67,7 +67,7 @@ function App() {
 
   //Refactoring
   const MainComponent = titles.map((el, ind) => {
-    return <MainPage error={error} setError={setError} changeStatus={changeStatus} removeTasks1={removeTasks1} title={el} addTask={addTask} changeFilter={changeFilter} key={ind} study={filteredTasks} movies={tasks2} />
+    return <MainPage error={error} setError={setError} filter={filter} changeStatus={changeStatus} removeTasks1={removeTasks1} title={el} addTask={addTask} changeFilter={changeFilter} key={ind} study={filteredTasks} movies={tasks2} />
   })
 
   return (
