@@ -18,6 +18,7 @@ export const MainPage = ({ title, tasks, removeTasks, changeFilter, addTask, cha
    const [newTaskTitle, setNewTaskTitle] = useState('')
    const [error, setError] = useState<boolean>(false)
 
+
    //Handles
    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.code === 'Enter' && e.currentTarget.value.trim() === '') {
@@ -25,7 +26,7 @@ export const MainPage = ({ title, tasks, removeTasks, changeFilter, addTask, cha
       }
    }
 
-   const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
+   const handleTaskOnChange = (e: ChangeEvent<HTMLInputElement>) => {
       setError(false)
       setNewTaskTitle(e.currentTarget.value)
    }
@@ -34,10 +35,8 @@ export const MainPage = ({ title, tasks, removeTasks, changeFilter, addTask, cha
       if (newTaskTitle.trim() === '') {
          setError(true)
          return
-      } else {
-
-         return addTask(newTaskTitle.trim(), taskListId)
       }
+      return addTask(newTaskTitle.trim(), taskListId)
    }
 
    const handleChangeFilter = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -45,9 +44,8 @@ export const MainPage = ({ title, tasks, removeTasks, changeFilter, addTask, cha
          return changeFilter('all', taskListId)
       } else if (e.currentTarget.innerHTML === 'Active') {
          return changeFilter('active', taskListId)
-      } else {
-         return changeFilter('complete', taskListId)
       }
+      return changeFilter('complete', taskListId)
    }
 
    const removeTodoListHandler = () => {
@@ -62,10 +60,11 @@ export const MainPage = ({ title, tasks, removeTasks, changeFilter, addTask, cha
    })
 
    return (
+
       <div>
          <h3>{title} <button onClick={removeTodoListHandler}>X</button></h3>
          <div>
-            <input className={error ? 'error' : ''} value={newTaskTitle} onChange={(e) => handleOnChange(e)} onKeyDown={(e) => handleKeyDown(e)} />
+            <input className={error ? 'error' : ''} value={newTaskTitle} onChange={(e) => handleTaskOnChange(e)} onKeyDown={(e) => handleKeyDown(e)} />
             <button onClick={handleAddTask}>+</button>
          </div>
          {error ? <span className="error-message">Field is required</span> : ''}

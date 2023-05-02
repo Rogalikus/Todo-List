@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import { MainPage } from './components/MainPage';
 import './App.css';
 import { v1 } from 'uuid';
@@ -15,25 +15,26 @@ export type TaskListType = { id: string, title: string, filter: FilteredValuesTy
 
 function App() {
 
-  let todoListId1 = v1()
-  let todoListId2 = v1()
+  // let todoListId1 = v1()
+  // let todoListId2 = v1()
 
   //useState
   const [todoList, setTodoList] = useState<Array<TaskListType>>([
-    { id: todoListId1, title: 'What to learn', filter: 'active' },
-    { id: todoListId2, title: 'What to did', filter: 'complete' }
+    { id: v1(), title: 'What to learn', filter: 'all' },
+    { id: v1(), title: 'What to did', filter: 'all' }
   ])
 
+  const [error, setError] = useState<boolean>(false)
   // let listId1 = todoList[0].id
   // let listId2 = todoList[1].id
 
   const [tasksList, setTasksList] = useState({
-    [todoListId1]: [
+    [todoList[0].id]: [
       { id: v1(), title: 'CSS', isDone: true },
       { id: v1(), title: 'HTML', isDone: false },
       { id: v1(), title: 'React', isDone: true }
     ],
-    [todoListId2]: [
+    [todoList[1].id]: [
       { id: v1(), title: 'Social-Network', isDone: true },
       { id: v1(), title: 'CLothingStore', isDone: true },
       { id: v1(), title: 'TodoList', isDone: false }
@@ -80,6 +81,29 @@ function App() {
     tasksList[todoListId] = newTasks;
     setTasksList({ ...tasksList })
   }
+  const addTodoList = (newTitle: string) => {
+    let newList: TaskListType = { id: v1(), title: newTitle, filter: 'all' }
+
+    setTodoList([...todoList, newList])
+    setTasksList({
+      ...tasksList,
+      [newList.id]: []
+    })
+
+  }
+
+  const [newListTitle, setNewListTitle] = useState('')
+  const handleListOnChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setError(false)
+    setNewListTitle(e.currentTarget.value)
+  }
+  const addTodoListHandler = () => {
+    if (newListTitle.trim() === '') {
+      setError(true)
+      return
+    }
+    return addTodoList(newListTitle.trim())
+  }
 
   //Refactoring
   const MainComponent = todoList.map((el) => {
@@ -107,8 +131,13 @@ function App() {
   })
 
   return (
-    <div className='App'>
-      {MainComponent}
+    <div>
+      <div>
+        <input className={error ? 'error' : ''} onChange={(e) => handleListOnChange(e)} value={newListTitle}></input><button onClick={addTodoListHandler}>+</button>
+      </div>
+      <div className='App'>
+        {MainComponent}
+      </div>
     </div>
   )
 }
