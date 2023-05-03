@@ -1,19 +1,23 @@
 import React, { ChangeEvent, useState } from "react";
+import { useDispatch } from 'react-redux';
 import { FilteredValuesType, TaskType } from "../App";
+import { ActionCreatorWithPayload } from "@reduxjs/toolkit";
 
 type PropsType = {
    title: string;
    tasks: Array<TaskType>
-   removeTasks: (id: string, taskId: string) => void
-   changeFilter: (value: FilteredValuesType, id: string) => void
-   addTask: (newTitle: string, todoListId: string) => void
-   changeStatus: (id: string, isDone: boolean, todoListId: string) => void
+   removeTasks: ActionCreatorWithPayload<{ id: string, taskId: string }>
+   changeFilter: ActionCreatorWithPayload<{ value: FilteredValuesType, id: string }>
+   addTask: ActionCreatorWithPayload<{ newTitle: string, todoListId: string }>
+   changeStatus: ActionCreatorWithPayload<{ id: string, isDone: boolean, todoListId: string }>
    filter: FilteredValuesType
    taskListId: string
-   removeTodoList: (taskListId: string) => void
+   removeTodoList: ActionCreatorWithPayload<string>
+   removeIdTodoList: ActionCreatorWithPayload<string>
 }
 
-export const MainPage = ({ title, tasks, removeTasks, changeFilter, addTask, changeStatus, removeTodoList, filter, taskListId }: PropsType) => {
+export const MainPage = ({ title, tasks, removeTasks, changeFilter, addTask, changeStatus, removeTodoList, removeIdTodoList, filter, taskListId }: PropsType) => {
+   const dispatch = useDispatch()
    //UseState
    const [newTaskTitle, setNewTaskTitle] = useState('')
    const [error, setError] = useState<boolean>(false)
@@ -22,7 +26,7 @@ export const MainPage = ({ title, tasks, removeTasks, changeFilter, addTask, cha
    //Handles
    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.code === 'Enter' && e.currentTarget.value.trim() === '') {
-         addTask(newTaskTitle, taskListId)
+         dispatch(addTask({ newTitle: newTaskTitle, todoListId: taskListId }))
       }
    }
 
@@ -36,27 +40,28 @@ export const MainPage = ({ title, tasks, removeTasks, changeFilter, addTask, cha
          setError(true)
          return
       }
-      return addTask(newTaskTitle.trim(), taskListId)
+      return dispatch(addTask({ newTitle: newTaskTitle.trim(), todoListId: taskListId }))
    }
 
    const handleChangeFilter = (e: React.MouseEvent<HTMLButtonElement>) => {
       if (e.currentTarget.innerHTML === 'All') {
-         return changeFilter('all', taskListId)
+         return dispatch(changeFilter({ value: 'all', id: taskListId }))
       } else if (e.currentTarget.innerHTML === 'Active') {
-         return changeFilter('active', taskListId)
+         return dispatch(changeFilter({ value: 'active', id: taskListId }))
       }
-      return changeFilter('complete', taskListId)
+      return dispatch(changeFilter({ value: 'complete', id: taskListId }))
    }
 
    const removeTodoListHandler = () => {
-      removeTodoList(taskListId)
+      dispatch(removeTodoList(taskListId))
+      dispatch(removeIdTodoList(taskListId))
    }
    //Refactoring
    const listOfTasks = tasks.map((el) => {
       const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-         changeStatus(el.id, e.currentTarget.checked, taskListId)
+         dispatch(changeStatus({ id: el.id, isDone: e.currentTarget.checked, todoListId: taskListId }))
       }
-      return <li key={el.id}><input type='checkbox' onChange={onChangeHandler} checked={el.isDone} /><span>{el.title}</span><button onClick={() => { removeTasks(el.id, taskListId) }}>X</button></li>
+      return <li key={el.id}><input type='checkbox' onChange={onChangeHandler} checked={el.isDone} /><span>{el.title}</span><button onClick={() => { dispatch(removeTasks({ id: el.id, taskId: taskListId })) }}>X</button></li>
    })
 
    return (
