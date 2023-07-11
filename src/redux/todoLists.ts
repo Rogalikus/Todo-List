@@ -1,5 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { FilteredValuesType, TaskListType } from "../App";
+import { FilteredValuesType, TaskListType } from "../types/types";
 import { RootState } from "./store";
 import { todoListId1, todoListId2 } from "./taskslist";
 

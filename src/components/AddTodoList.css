@@ -1,0 +1,13 @@
+.addTodo {
+  display: flex;
+  align-items: flex-start;
+  height: 95px;
+}
+.addTodoButton {
+  border-radius: 20px;
+  width: 35px;
+  height: 35px;
+}
+.addTodoInput {
+  width: 300px;
+}

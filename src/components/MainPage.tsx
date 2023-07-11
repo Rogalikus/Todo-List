@@ -1,7 +1,8 @@
 import React, { ChangeEvent, useState } from "react";
 import { useDispatch } from 'react-redux';
-import { FilteredValuesType, TaskType } from "../App";
+import { FilteredValuesType, TaskType } from "../types/types";
 import { ActionCreatorWithPayload } from "@reduxjs/toolkit";
+import './MainPage.css'
 
 type PropsType = {
    title: string;
@@ -25,7 +26,8 @@ export const MainPage = ({ title, tasks, removeTasks, changeFilter, addTask, cha
 
    //Handles
    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.code === 'Enter' && e.currentTarget.value.trim() === '') {
+      console.log(e.code)
+      if (e.code === 'Enter') {
          dispatch(addTask({ newTitle: newTaskTitle, todoListId: taskListId }))
       }
    }
@@ -61,27 +63,26 @@ export const MainPage = ({ title, tasks, removeTasks, changeFilter, addTask, cha
       const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
          dispatch(changeStatus({ id: el.id, isDone: e.currentTarget.checked, todoListId: taskListId }))
       }
-      return <li key={el.id}><input type='checkbox' onChange={onChangeHandler} checked={el.isDone} /><span>{el.title}</span><button onClick={() => { dispatch(removeTasks({ id: el.id, taskId: taskListId })) }}>X</button></li>
+      return <li className="liOfTasks" key={el.id}><input type='checkbox' onChange={onChangeHandler} checked={el.isDone} /><span className="titleTask">{el.title}</span><button className="removeTaskButton" onClick={() => { dispatch(removeTasks({ id: el.id, taskId: taskListId })) }}>x</button></li>
    })
 
    return (
-
-      <div>
-         <h3>{title} <button onClick={removeTodoListHandler}>X</button></h3>
-         <div>
-            <input className={error ? 'error' : ''} value={newTaskTitle} onChange={(e) => handleTaskOnChange(e)} onKeyDown={(e) => handleKeyDown(e)} />
-            <button onClick={handleAddTask}>+</button>
+      <div className="TodoLists">
+         <h3 className="titleList">{title} <button className="removeListsButton" onClick={removeTodoListHandler}>x</button></h3>
+         <div className='addTask'>
+            <input className={error ? 'error' : 'addInput'} value={newTaskTitle} onChange={(e) => handleTaskOnChange(e)} onKeyDown={(e) => handleKeyDown(e)} />
+            <button className="addTaskButton" onClick={handleAddTask}>+</button>
          </div>
          {error ? <span className="error-message">Field is required</span> : ''}
-         <ul>
+         <ul className="ulOfTasks">
             {
                listOfTasks
             }
          </ul>
-         <div>
-            <button className={filter === 'all' ? 'active-filter' : ''} onClick={(e) => { handleChangeFilter(e) }}>All</button>
-            <button className={filter === 'active' ? 'active-filter' : ''} onClick={(e) => { handleChangeFilter(e) }}>Active</button>
-            <button className={filter === 'complete' ? 'active-filter' : ''} onClick={(e) => { handleChangeFilter(e) }}>Completed</button>
+         <div className="filterButtons">
+            <button className={filter === 'all' ? 'active-filter' : 'filter'} onClick={(e) => { handleChangeFilter(e) }}>All</button>
+            <button className={filter === 'active' ? 'active-filter' : 'filter'} onClick={(e) => { handleChangeFilter(e) }}>Active</button>
+            <button className={filter === 'complete' ? 'active-filter' : 'filter'} onClick={(e) => { handleChangeFilter(e) }}>Completed</button>
          </div>
       </div>
    )

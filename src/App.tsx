@@ -1,46 +1,17 @@
-import React, { ChangeEvent, useState } from 'react';
+import React from 'react';
 import { MainPage } from './components/MainPage';
 import './App.css';
-import { useSelector, useDispatch } from 'react-redux';
-import { addTodoList, changeFilter, removeTodoList, todoListSelector } from './redux/todoLists';
-import { addIdTodoList, addTask, changeStatus, removeIdTodoList, removeTasks, tasksListSelector } from './redux/taskslist';
-import { v1 } from 'uuid';
+import { useSelector } from 'react-redux';
+import { changeFilter, removeTodoList, todoListSelector } from './redux/todoLists';
+import { addTask, changeStatus, removeIdTodoList, removeTasks, tasksListSelector } from './redux/taskslist';
+import { AddTodoList } from './components/AddTodoList';
 
-export type TaskType = {
-  id: string;
-  title: string;
-  isDone: boolean;
-}
 
-export type FilteredValuesType = 'all' | 'complete' | 'active';
-
-export type TaskListType = { id: string, title: string, filter: FilteredValuesType }
 
 function App() {
-
-  //useDispatch
-  const dispatch = useDispatch()
-  //useState
-  const [error, setError] = useState<boolean>(false)
-  const [newListTitle, setNewListTitle] = useState('')
   //useSelectors
   const { todoList } = useSelector(todoListSelector)
   const { tasksList } = useSelector(tasksListSelector)
-  //Handlers
-  const handleListOnChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setError(false)
-    setNewListTitle(e.currentTarget.value)
-  }
-  const addTodoListHandler = () => {
-    if (newListTitle.trim() === '') {
-      setError(true)
-      return
-    } else {
-      let newIdTodoList = v1()
-      dispatch(addIdTodoList(newIdTodoList))
-      dispatch(addTodoList({ newListTitle: newListTitle.trim(), newIdTodoList }))
-    }
-  }
 
   //Refactoring
   const MainComponent = todoList.map((el) => {
@@ -69,11 +40,12 @@ function App() {
   })
 
   return (
-    <div>
-      <div>
-        <input className={error ? 'error' : ''} onChange={(e) => handleListOnChange(e)} value={newListTitle}></input><button onClick={addTodoListHandler}>+</button>
+    <div className='App'>
+      <div className='header'>
+        <h1 className='top'>ToDoList</h1>
+        <AddTodoList />
       </div>
-      <div className='App'>
+      <div className='MainComp'>
         {MainComponent}
       </div>
     </div>
